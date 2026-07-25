@@ -56,7 +56,7 @@
         const urlParams = new URLSearchParams(window.location.search);
         const roomName = urlParams.get('room') || 'VaagaiSeithigal';
         
-        document.getElementById('vdo-engine').src = `./index.html?scene&room=${roomName}&autostart`;
+        document.getElementById('vdo-engine').src = `./index.html?scene&room=${roomName}&autostart&stereo&proaudio`;
 
         const ARC_RADIUS = 30; 
         let analyser, dataArray, vBars = []; 
