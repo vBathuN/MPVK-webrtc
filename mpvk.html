@@ -452,7 +452,7 @@
                     if (Date.now() - spk.lastActiveTime > 1200) spk.targetFaceAlpha = 0.0; 
                 }
 
-                const mirrorScale = spk.id === 'Guest' ? 'scaleX(-1.20) scaleY(1.20)' : 'scale(1.20)';
+                const mirrorScale = spk.id === 'Guest' ? 'scaleX(-1.25) scaleY(1.25)' : 'scale(1.25)';
                 const inwardTilt = 14; const dynamicTilt = inwardTilt + lookSideAngle;
 
                 spk.canvas.style.transform = `translateX(-50%) ${mirrorScale} rotateY(${dynamicTilt}deg)`;
