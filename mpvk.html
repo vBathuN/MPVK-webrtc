@@ -537,6 +537,10 @@
             });
         };
         document.addEventListener('DOMContentLoaded', bootVisualizer);
+        // கண்களின் பிக்சல் அளவைக் கண்டுபிடிக்க
+document.getElementById('stage-host').addEventListener('click', function(e) {
+    alert("சரியான அளவு -> X: " + e.offsetX + " | Y: " + e.offsetY);
+});
     </script>
 </body>
 </html>
