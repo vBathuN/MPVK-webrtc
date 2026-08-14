@@ -26,9 +26,6 @@
             display: flex;
         }
 
-        /* =========================================================
-           1. LEFT SIDE: TICKER WIDGET
-           ========================================================= */
         .left-ad-slot {
             width: 33vw; height: 100vh;
             background-color: transparent !important;
@@ -47,9 +44,6 @@
         }
         #adbreakingnews { width: 100%; padding: 15px 10px 0 10px; height: 100%; overflow-y: auto; }
 
-        /* =========================================================
-           2. TOP RIGHT CORNER: BRAND LOGO
-           ========================================================= */
         .channel-title-corner {
             position: absolute; top: 5vh; right: 2.8vw; display: flex;
             border-radius: 8px; overflow: hidden; font-size: 2.2vw; font-weight: 900; letter-spacing: 1px;
@@ -58,9 +52,6 @@
         .logo-joker { background-color: #b90000; color: white; padding: 0.8vh 0.8vw; text-shadow: 1px 1px 3px rgba(0,0,0,0.5); }
         .logo-durbar { background-color: #004a00; color: white; padding: 0.8vh 0.8vw; text-shadow: 1px 1px 3px rgba(0,0,0,0.6); }
 
-        /* =========================================================
-           3. RIGHT SIDE: DUAL JOKER STAGE & DYNAMIC STYLING
-           ========================================================= */
         .right-jokers-stage {
             width: 67vw; height: 100vh;
             display: flex; justify-content: center; align-items: flex-end;
@@ -68,7 +59,6 @@
             transition: all 0.6s ease-in-out;
         }
 
-        /* --- அசல் அளவுகள் மாறாத VTuber Pod --- */
         .vtuber-pod {
             width: 29vw; height: 75vh; position: relative;
             display: flex; flex-direction: column; justify-content: flex-end; align-items: center;
@@ -76,7 +66,6 @@
             transform-origin: bottom center;
         }
 
-        /* --- HOST ALONE STATE --- */
         .vtuber-pod.alone-host {
             width: 45vw !important;
             height: 85vh !important;
@@ -89,9 +78,6 @@
             transform-origin: bottom center !important;
         }
 
-        /* =========================================================
-           ✨ புது வரவு 1: நியான் சைபர்பங்க் பார்டர்கள் (Cyberpunk Neon Pods)
-           ========================================================= */
         .cyber-pod-frame {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             pointer-events: none; z-index: 5;
@@ -100,7 +86,6 @@
             clip-path: polygon(0 0, calc(100% - 30px) 0, 100% 30px, 100% 100%, 30px 100%, 0 calc(100% - 30px));
         }
 
-        /* Host Pod Neon Red */
         #pod-host .cyber-pod-frame {
             border: 2px solid rgba(255, 26, 26, 0.4);
             box-shadow: inset 0 0 25px rgba(255, 26, 26, 0.25), 0 0 20px rgba(255, 26, 26, 0.3);
@@ -108,7 +93,6 @@
             border-bottom: 4px solid #ff1a1a;
         }
 
-        /* Guest Pod Neon Green */
         #pod-guest .cyber-pod-frame {
             border: 2px solid rgba(0, 255, 102, 0.4);
             box-shadow: inset 0 0 25px rgba(0, 255, 102, 0.25), 0 0 20px rgba(0, 255, 102, 0.3);
@@ -116,9 +100,6 @@
             border-bottom: 4px solid #00ff66;
         }
 
-        /* =========================================================
-           ✨ புது வரவு 2: ஹாலோகிராம் மேடைத் தளம் (Holographic Floor Grid)
-           ========================================================= */
         .holo-floor-canvas {
             position: absolute;
             bottom: 10px; left: 50%;
@@ -128,7 +109,6 @@
             opacity: 0.85;
         }
 
-        /* --- அசல் Joker Canvas (பொசிஷன் மாறவில்லை) --- */
         .joker-canvas {
             position: absolute; bottom: -75px; left: 50%;
             transform-origin: bottom center; z-index: 10; will-change: transform;
@@ -149,9 +129,6 @@
         .badge-guest { border-bottom: 7px solid #00ff66; }
         .dot { width: 1.2vw; height: 1.2vw; max-width: 18px; max-height: 18px; border-radius: 50%; }
 
-        /* =========================================================
-           4. OBS VERTICAL CANVAS (9:16) RESPONSIVE RULES
-           ========================================================= */
         @media (orientation: portrait) {
             .left-ad-slot { display: none !important; }
             .channel-title-corner {
@@ -226,7 +203,6 @@
 
         let audioCtx; 
 
-        // 🚨 Visualizer நிறங்கள் மஞ்சள் நிறத்திற்கு (Yellow) மாற்றப்பட்டுள்ளன 🚨
         const speakers = [
             {
                 id: 'Host', pod: document.getElementById('pod-host'), canvas: document.getElementById('stage-host'), ctx: document.getElementById('stage-host').getContext('2d'),
@@ -250,12 +226,12 @@
             imgObj.src = srcList[0];
         }
         
-        loadWithFallback(bgImg, ['./mpvk.jpg', './mpvk.png', './mpvk.PNG', './mpvk.JPG']);
-        loadWithFallback(fgImg, ['./mpvk1.jpg', './mpvk1.png', './mpvk1.PNG', './mpvk1.JPG']);
+        // 🚨 PNG படங்களுக்கு முன்னுரிமை கொடுக்கப்பட்டுள்ளது 🚨
+        loadWithFallback(bgImg, ['./mpvk.png', './mpvk.PNG', './mpvk.jpg', './mpvk.JPG']);
+        loadWithFallback(fgImg, ['./mpvk1.png', './mpvk1.PNG', './mpvk1.jpg', './mpvk1.JPG']);
 
         let contourNormals = []; let contourScanned = false;
         
-        // 🚨 JPG படமாக இருந்தாலும் கருப்பு பின்னணியை சரியாகப் புறக்கணிக்க Scanner அப்டேட் செய்யப்பட்டுள்ளது 🚨
         function safeScanContour() {
             if (contourScanned || !fgImg.complete || fgImg.naturalWidth === 0) return;
             try {
@@ -263,24 +239,21 @@
                 const octx = off.getContext('2d', { willReadFrequently: true });
                 octx.drawImage(fgImg, 0, 0, fgImg.naturalWidth, fgImg.naturalHeight, 60, 40, 300, 340);
                 const data = octx.getImageData(0, 0, 420, 480).data;
-                const cx = 210, cy = 210; const rays = 75; contourNormals = [];
+                
+                // 🚨 தலையின் பகுதியை ஸ்கேன் செய்ய Y அச்சின் மையம் 150 என மாற்றப்பட்டுள்ளது 🚨
+                const cx = 210, cy = 150; 
+                const rays = 75; contourNormals = [];
                 for (let i = 0; i < rays; i++) {
                     const angle = (i / rays) * (Math.PI * 2);
                     if (angle > Math.PI * 0.35 && angle < Math.PI * 0.65) continue;
                     const nx = Math.cos(angle); const ny = Math.sin(angle);
                     
-                    // வெளியிலிருந்து உள்ளே ஸ்கேன் செய்யும் போது
                     for (let r = 165; r > 15; r--) {
                         const px = Math.round(cx + nx * r); const py = Math.round(cy + ny * r);
                         if (px >= 0 && px < 420 && py >= 0 && py < 480) {
-                            const idx = (py * 420 + px) * 4;
-                            const rVal = data[idx];
-                            const gVal = data[idx+1];
-                            const bVal = data[idx+2];
-                            const aVal = data[idx+3];
-                            
-                            // வெளிப்படைத்தன்மை கொண்டதாக இருந்தாலும் அல்லது கருப்பு இல்லாத வண்ணமாக இருந்தாலும்
-                            if (aVal > 20 && (rVal > 20 || gVal > 20 || bVal > 20)) { 
+                            const alpha = data[(py * 420 + px) * 4 + 3];
+                            // 🚨 Transparency உள்ளதா எனச் சரிபார்க்கும் துல்லியமான குறியீடு 🚨
+                            if (alpha > 50) { 
                                 contourNormals.push({ x: px, y: py, nx: nx, ny: ny }); break; 
                             }
                         }
@@ -529,12 +502,10 @@
                     if (spk.isBlinking) {
                         spk.ctx.fillStyle = "#050200"; 
                         
-                        // இடது கண்
                         spk.ctx.beginPath(); 
                         spk.ctx.ellipse(194, 135, 3.5, 3.5, 0, 0, Math.PI*2); 
                         spk.ctx.fill();
                         
-                        // வலது கண்
                         ctx = spk.ctx;
                         ctx.beginPath(); 
                         ctx.ellipse(226, 137, 3.5, 3.5, 0, 0, Math.PI*2); 
@@ -544,6 +515,10 @@
             });
         };
         document.addEventListener('DOMContentLoaded', bootVisualizer);
+        
+        document.getElementById('stage-host').addEventListener('click', function(e) {
+            alert("சரியான அளவு -> X: " + e.offsetX + " | Y: " + e.offsetY);
+        });
     </script>
 </body>
 </html>
