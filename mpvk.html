@@ -249,7 +249,6 @@
             imgObj.src = srcList[0];
         }
         
-        // 🚨 JPG படங்கள் சேர்க்கப்பட்டுள்ளன 🚨
         loadWithFallback(bgImg, ['./mpvk.jpg', './mpvk.png', './mpvk.PNG', './mpvk.JPG']);
         loadWithFallback(fgImg, ['./mpvk1.jpg', './mpvk1.png', './mpvk1.PNG', './mpvk1.JPG']);
 
@@ -451,13 +450,12 @@
                 }
 
                 let lookSideAngle = Math.sin(Date.now() * 0.002) * 2.5;
-                let glitchX = 0;
 
+                // 🚨 அதிர்வு (Glitch) மற்றும் அதற்கான நடுக்கம் குறியீட்டிலிருந்து முழுமையாக நீக்கப்பட்டுள்ளது 🚨
                 if (avgVol > 22) { 
                     spk.lastActiveTime = Date.now(); spk.targetFaceAlpha = 1.0; 
                     spk.targetJaw = blendshapes.jawOpen * 18; 
                     spk.targetSmile = blendshapes.mouthStretch * 12; 
-                    if (avgVol > 40) glitchX = (Math.random() - 0.5) * 6;
                 } else if (avgVol > 5) {
                     spk.lastActiveTime = Date.now(); spk.targetFaceAlpha = 0.9; 
                     spk.targetJaw = 0; spk.targetSmile = 0;
@@ -469,7 +467,7 @@
                 const mirrorScale = spk.id === 'Guest' ? 'scaleX(-1.35) scaleY(1.35)' : 'scale(1.35)';
                 const inwardTilt = 14; const dynamicTilt = inwardTilt + lookSideAngle;
 
-                spk.canvas.style.transform = `translateX(-50%) ${mirrorScale} rotateY(${dynamicTilt}deg) translateX(${glitchX}px)`;
+                spk.canvas.style.transform = `translateX(-50%) ${mirrorScale} rotateY(${dynamicTilt}deg)`;
 
                 if (bgImg.complete && fgImg.complete && bgImg.naturalHeight > 0 && fgImg.naturalHeight > 0) {
                     spk.currJaw += (spk.targetJaw - spk.currJaw) * 0.32; spk.currSmile += (spk.targetSmile - spk.currSmile) * 0.28;
@@ -502,45 +500,45 @@
                         }
                         const natW = fgImg.naturalWidth; const natH = fgImg.naturalHeight; const scale = 340 / natH; 
                         
-                        // 🚨 புதிய படத்திற்கான வாய் அளவுகள் மாற்றப்பட்டுள்ளன 🚨
-                        const sTop = natH * 0.30; // பழைய அளவு: 0.585
-                        const sBot = natH * 0.35; // பழைய அளவு: 0.625
+                        // 🚨 நீங்கள் கொடுத்த வாய் அளவு Y: 155 அடிப்படையில் கச்சிதமாக அமைக்கப்பட்டுள்ளது 🚨
+                        const sTop = natH * 0.338; 
+                        const sBot = natH * 0.380; 
                         const sRubberH = sBot - sTop; 
                         
                         const dTopH = sTop * scale; const dRubberH = (sRubberH * scale) + spk.currJaw; 
                         const dBotY = dTopH + dRubberH; const dBotH = (natH - sBot) * scale;
-                        const stretchX = 60 - (spk.currSmile * 0.5); const stretchW = 300 + spk.currSmile;
-                        const botJawX = 60 - (spk.currSmile * 0.25);
 
+                        // 🚨 ஓரங்கள் (Edges) சரியாகப் பொருந்த அகல நீட்சி (Horizontal Stretch) நீக்கப்பட்டுள்ளது 🚨
                         spk.ctx.drawImage(fgImg, 0, 0, natW, sTop,  60, 40, 300, dTopH);
-                        spk.ctx.drawImage(fgImg, 0, sTop, natW, sRubberH,  stretchX, 40 + dTopH, stretchW, dRubberH);
-                        spk.ctx.drawImage(fgImg, 0, sBot, natW, natH - sBot,  botJawX, 40 + dBotY, 300 + (spk.currSmile*0.5), dBotH);
+                        spk.ctx.drawImage(fgImg, 0, sTop, natW, sRubberH,  60, 40 + dTopH, 300, dRubberH);
+                        spk.ctx.drawImage(fgImg, 0, sBot, natW, natH - sBot,  60, 40 + dBotY, 300, dBotH);
                     }
                     spk.ctx.restore(); 
 
-                    // 🚨 மூட்டைப் பூச்சிக்கான சரியான கண் சிமிட்டும் அளவுகள் மற்றும் கோணம் 🚨
+                    // 🚨 துல்லியமான விழி இடங்கள் (194 மற்றும் 226) மற்றும் மிகச் சிறிய அளவு (3.5px) 🚨
                     if (spk.isBlinking) {
-                        spk.ctx.fillStyle = "#331a00"; // அடர் பழுப்பு நிறம் (புருவத்தின் நிழல் போல)
+                        spk.ctx.fillStyle = "#050200"; 
                         
-                        // இடது கண்: X=165, Y=140, சாய்வு கோணம் (Rotation) = 20 டிகிரி (0.35 Radian)
+                        // இடது கண்: X: 194 | Y: 135
                         spk.ctx.beginPath(); 
-                        spk.ctx.ellipse(165, 140, 26, 18, 0.35, 0, Math.PI*2); 
+                        spk.ctx.ellipse(194, 135, 3.5, 3.5, 0, 0, Math.PI*2); 
                         spk.ctx.fill();
                         
-                        // வலது கண்: X=255, Y=140, சாய்வு கோணம் (Rotation) = -20 டிகிரி (-0.35 Radian)
+                        // வலது கண்: X: 226 | Y: 137
                         ctx = spk.ctx;
                         ctx.beginPath(); 
-                        ctx.ellipse(255, 140, 26, 18, -0.35, 0, Math.PI*2); 
+                        ctx.ellipse(226, 137, 3.5, 3.5, 0, 0, Math.PI*2); 
                         ctx.fill();
                     }
                 }
             });
         };
         document.addEventListener('DOMContentLoaded', bootVisualizer);
+        
         // கண்களின் பிக்சல் அளவைக் கண்டுபிடிக்க
-document.getElementById('stage-host').addEventListener('click', function(e) {
-    alert("சரியான அளவு -> X: " + e.offsetX + " | Y: " + e.offsetY);
-});
+        document.getElementById('stage-host').addEventListener('click', function(e) {
+            alert("சரியான அளவு -> X: " + e.offsetX + " | Y: " + e.offsetY);
+        });
     </script>
 </body>
 </html>
