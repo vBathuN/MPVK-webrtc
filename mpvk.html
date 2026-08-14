@@ -46,13 +46,36 @@
         }
         #adbreakingnews { width: 100%; padding: 15px 10px 0 10px; height: 100%; overflow-y: auto; }
 
+        /* =========================================================
+           2. TOP RIGHT CORNER: BRAND LOGO
+           ========================================================= */
         .channel-title-corner {
             position: absolute; top: 5vh; right: 2.8vw; display: flex;
-            border-radius: 8px; overflow: hidden; font: Tamil039; font-size: 2.2vw; font-weight: 900; letter-spacing: 1px;
+            border-radius: 8px; overflow: hidden; font-size: 2.2vw; font-weight: 900; 
+            
+            /* 🚨 நீங்கள் கேட்ட புதிய மாற்றங்கள் 🚨 */
+            font-family: 'Tamil039', sans-serif; /* Tamil039 Font */
+            letter-spacing: normal; /* Letter spacing Default */
+            word-spacing: -10px; /* Word spacing -10 */
+            
             box-shadow: 0 10px 25px rgba(0,0,0,0.6); z-index: 40; border: 3px solid rgba(255, 255, 255, 0.3);
         }
-        .logo-joker { background-color: #b90000; color: white; padding: 0.8vh 0.8vw; text-shadow: 1px 1px 3px rgba(0,0,0,0.5); }
-        .logo-durbar { background-color: #004a00; color: white; padding: 0.8vh 0.8vw; text-shadow: 1px 1px 3px rgba(0,0,0,0.6); }
+        
+        /* சிவப்பு நிறப் பகுதி */
+        .logo-joker { 
+            background-color: #b90000; 
+            color: white; 
+            padding: 0.8vh 0.8vw; 
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.5); 
+        }
+        
+        /* மஞ்சள் நிறப் பகுதி */
+        .logo-durbar { 
+            background-color: #ffcc00; /* மஞ்சள் பின்னணி */
+            color: black; /* மஞ்சள் நிறத்தில் தெளிவாகத் தெரிய எழுத்துக்கள் கருப்பாக மாற்றப்பட்டுள்ளது */
+            padding: 0.8vh 0.8vw; 
+            text-shadow: none; 
+        }
 
         .right-jokers-stage {
             width: 67vw; height: 100vh;
