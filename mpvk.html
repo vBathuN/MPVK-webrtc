@@ -226,17 +226,18 @@
 
         let audioCtx; 
 
+        // 🚨 Visualizer நிறங்கள் மஞ்சள் நிறத்திற்கு (Yellow) மாற்றப்பட்டுள்ளன 🚨
         const speakers = [
             {
                 id: 'Host', pod: document.getElementById('pod-host'), canvas: document.getElementById('stage-host'), ctx: document.getElementById('stage-host').getContext('2d'),
-                filterStyle: 'none', pColor: '#ff1a1a', sColor: '#ff4d4d', wColor1: '#9900cc', wColor2: '#cc33ff',
+                filterStyle: 'none', pColor: '#FFD700', sColor: '#FFFF00', wColor1: '#FFEA00', wColor2: '#FFCC00',
                 currJaw: 0, targetJaw: 0, currSmile: 0, targetSmile: 0, 
                 faceAlpha: 0.85, targetFaceAlpha: 0, lastActiveTime: Date.now() + 1500,
                 isBlinking: false, analyser: null, dataArray: null, trackId: null, track: null, pc: null
             },
             {
                 id: 'Guest', pod: document.getElementById('pod-guest'), canvas: document.getElementById('stage-guest'), ctx: document.getElementById('stage-guest').getContext('2d'),
-                filterStyle: 'hue-rotate(140deg) saturate(1.4)', pColor: '#00ff66', sColor: '#33ff88', wColor1: '#00e5ff', wColor2: '#0088ff',
+                filterStyle: 'hue-rotate(140deg) saturate(1.4)', pColor: '#FFD700', sColor: '#FFFF00', wColor1: '#FFEA00', wColor2: '#FFCC00',
                 currJaw: 0, targetJaw: 0, currSmile: 0, targetSmile: 0, 
                 faceAlpha: 0.85, targetFaceAlpha: 0, lastActiveTime: Date.now() + 1500,
                 isBlinking: false, analyser: null, dataArray: null, trackId: null, track: null, pc: null
@@ -253,6 +254,8 @@
         loadWithFallback(fgImg, ['./mpvk1.jpg', './mpvk1.png', './mpvk1.PNG', './mpvk1.JPG']);
 
         let contourNormals = []; let contourScanned = false;
+        
+        // 🚨 JPG படமாக இருந்தாலும் கருப்பு பின்னணியை சரியாகப் புறக்கணிக்க Scanner அப்டேட் செய்யப்பட்டுள்ளது 🚨
         function safeScanContour() {
             if (contourScanned || !fgImg.complete || fgImg.naturalWidth === 0) return;
             try {
@@ -265,10 +268,21 @@
                     const angle = (i / rays) * (Math.PI * 2);
                     if (angle > Math.PI * 0.35 && angle < Math.PI * 0.65) continue;
                     const nx = Math.cos(angle); const ny = Math.sin(angle);
+                    
+                    // வெளியிலிருந்து உள்ளே ஸ்கேன் செய்யும் போது
                     for (let r = 165; r > 15; r--) {
                         const px = Math.round(cx + nx * r); const py = Math.round(cy + ny * r);
                         if (px >= 0 && px < 420 && py >= 0 && py < 480) {
-                            if (data[(py * 420 + px) * 4 + 3] > 40) { contourNormals.push({ x: px, y: py, nx: nx, ny: ny }); break; }
+                            const idx = (py * 420 + px) * 4;
+                            const rVal = data[idx];
+                            const gVal = data[idx+1];
+                            const bVal = data[idx+2];
+                            const aVal = data[idx+3];
+                            
+                            // வெளிப்படைத்தன்மை கொண்டதாக இருந்தாலும் அல்லது கருப்பு இல்லாத வண்ணமாக இருந்தாலும்
+                            if (aVal > 20 && (rVal > 20 || gVal > 20 || bVal > 20)) { 
+                                contourNormals.push({ x: px, y: py, nx: nx, ny: ny }); break; 
+                            }
                         }
                     }
                 }
@@ -444,14 +458,13 @@
                 }
 
                 if (spk.id === 'Host') {
-                    renderHologramFloor(holoHostCtx, '#ff1a1a', avgVol);
+                    renderHologramFloor(holoHostCtx, '#FFD700', avgVol);
                 } else {
-                    renderHologramFloor(holoGuestCtx, '#00ff66', avgVol);
+                    renderHologramFloor(holoGuestCtx, '#FFD700', avgVol);
                 }
 
                 let lookSideAngle = Math.sin(Date.now() * 0.002) * 2.5;
 
-                // 🚨 அதிர்வு (Glitch) மற்றும் அதற்கான நடுக்கம் குறியீட்டிலிருந்து முழுமையாக நீக்கப்பட்டுள்ளது 🚨
                 if (avgVol > 22) { 
                     spk.lastActiveTime = Date.now(); spk.targetFaceAlpha = 1.0; 
                     spk.targetJaw = blendshapes.jawOpen * 18; 
@@ -500,7 +513,6 @@
                         }
                         const natW = fgImg.naturalWidth; const natH = fgImg.naturalHeight; const scale = 340 / natH; 
                         
-                        // 🚨 நீங்கள் கொடுத்த வாய் அளவு Y: 155 அடிப்படையில் கச்சிதமாக அமைக்கப்பட்டுள்ளது 🚨
                         const sTop = natH * 0.338; 
                         const sBot = natH * 0.380; 
                         const sRubberH = sBot - sTop; 
@@ -508,23 +520,21 @@
                         const dTopH = sTop * scale; const dRubberH = (sRubberH * scale) + spk.currJaw; 
                         const dBotY = dTopH + dRubberH; const dBotH = (natH - sBot) * scale;
 
-                        // 🚨 ஓரங்கள் (Edges) சரியாகப் பொருந்த அகல நீட்சி (Horizontal Stretch) நீக்கப்பட்டுள்ளது 🚨
                         spk.ctx.drawImage(fgImg, 0, 0, natW, sTop,  60, 40, 300, dTopH);
                         spk.ctx.drawImage(fgImg, 0, sTop, natW, sRubberH,  60, 40 + dTopH, 300, dRubberH);
                         spk.ctx.drawImage(fgImg, 0, sBot, natW, natH - sBot,  60, 40 + dBotY, 300, dBotH);
                     }
                     spk.ctx.restore(); 
 
-                    // 🚨 துல்லியமான விழி இடங்கள் (194 மற்றும் 226) மற்றும் மிகச் சிறிய அளவு (3.5px) 🚨
                     if (spk.isBlinking) {
                         spk.ctx.fillStyle = "#050200"; 
                         
-                        // இடது கண்: X: 194 | Y: 135
+                        // இடது கண்
                         spk.ctx.beginPath(); 
                         spk.ctx.ellipse(194, 135, 3.5, 3.5, 0, 0, Math.PI*2); 
                         spk.ctx.fill();
                         
-                        // வலது கண்: X: 226 | Y: 137
+                        // வலது கண்
                         ctx = spk.ctx;
                         ctx.beginPath(); 
                         ctx.ellipse(226, 137, 3.5, 3.5, 0, 0, Math.PI*2); 
@@ -534,11 +544,6 @@
             });
         };
         document.addEventListener('DOMContentLoaded', bootVisualizer);
-        
-        // கண்களின் பிக்சல் அளவைக் கண்டுபிடிக்க
-        document.getElementById('stage-host').addEventListener('click', function(e) {
-            alert("சரியான அளவு -> X: " + e.offsetX + " | Y: " + e.offsetY);
-        });
     </script>
 </body>
 </html>
