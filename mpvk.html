@@ -2,7 +2,7 @@
 <html lang="ta">
 <head>
     <meta charset="UTF-8">
-    <title>Joker Durbar - Pro Broadcast Overlay (Director Controlled Auto-Queue)</title>
+    <title>MPVK - Pro Broadcast Overlay (Director Controlled Auto-Queue)</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/gsap/latest/TweenMax.min.js"></script>
@@ -160,7 +160,8 @@
         /* 🚨 PORTRAIT MODE FIXES 🚨 */
         @media (orientation: portrait) {
             body {
-                /* பின்னணியில் உள்ள வாரியர் மூட்டைப்பூச்சிகள் தெரிய Center-க்கு பதில் Bottom செட் செய்யப்பட்டுள்ளது */
+                /* வானம் மறைந்து வாரியர்ஸ் பெரிதாகத் தெரிய zoom செய்கிறோம் */
+                background-size: auto 135vh !important; 
                 background-position: bottom center !important; 
             }
             .left-ad-slot { display: none !important; }
@@ -177,27 +178,45 @@
             .right-jokers-stage {
                 width: 100vw !important; height: 100vh !important;
                 flex-direction: column; 
-                justify-content: flex-end; /* மேலிருந்து வராமல் கீழிருந்து தொடங்க */
+                justify-content: flex-end; 
                 align-items: center; 
-                padding-bottom: 5vh; 
+                padding-bottom: 0 !important; /* கீழிருந்து சரியாகத் தொடங்க padding நீக்கம் */
             }
             
             .vtuber-pod { 
-                width: 82vw !important; 
-                height: 42vh !important; 
+                width: 90vw !important; 
+                height: 55vh !important; 
                 top: auto; 
             }
             
             .vtuber-pod.alone-host {
                 width: 100vw !important; 
-                height: 55vh !important;
-                transform: scale(1.3); /* தலைமை மூட்டைப்பூச்சியை பெரிதாக்க */
+                height: 60vh !important;
+                transform: scale(1.7); /* மூட்டைப்பூச்சி இன்னும் பெரிதாக */
                 transform-origin: bottom center;
                 top: auto; 
-                bottom: 8vh; /* கீழே மறைவதைத் தடுத்து மேலே ஏற்ற */
+                bottom: 0 !important; /* கால்கள் அந்தரத்தில் மிதக்காமல் கீழிருந்து தொடங்க */
+            }
+
+            .joker-canvas {
+                bottom: 0 !important; /* கட் ஆகும் பகுதி தெரியாமல் இருக்க தரை மட்டத்திற்கு */
             }
             
-            .speaker-badge { display: none !important; }
+            /* நேம் பேட்ஜ் மீண்டும் தெரியவைக்க */
+            .speaker-badge { 
+                display: flex !important; 
+                bottom: 1.5vh !important;
+                z-index: 50;
+            }
+            .alone-host .speaker-badge { 
+                /* மூட்டைப்பூச்சியின் scale(1.7) உள்ளதால் font-size குறைக்கப்பட்டுள்ளது */
+                font-size: 2.2vw !important; 
+                padding: 0.8vh 1.5vw !important;
+                border-radius: 8px !important;
+            }
+            .alone-host .badge-host { border-bottom: 4px solid #ff1a1a !important; }
+            
+            .dot { width: 1.5vw !important; height: 1.5vw !important; }
         }
     </style>
 </head>
