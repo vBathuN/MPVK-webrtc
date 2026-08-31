@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=720, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Vaagai Seithigal - Vertical Edition (Optimized)</title>
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://host.rtbs.in/rtcs/nivoslider.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/2.0.2/anime.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@800;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Agdasima:wght@400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@500;700&display=swap');
+
+        @font-face {
+          font-family: 'Tamil039';
+          src: url('https://cdn.lawtamil.in/font/Tamil039.woff2') format('woff2'),
+               url('https://cdn.lawtamil.in/font/Tamil039.woff') format('woff');
+          font-weight: bold; font-style: normal; font-display: swap; 
+        }
+
+        html, body {
+            width: 720px; height: 1280px; margin: 0; padding: 0;
+            background-color: transparent; overflow: hidden;
+        }
+
+        .main-container {
+            width: 720px; height: 1280px; position: absolute; top: 0; left: 0;
+                        transform: scale(0.6); transform-origin: top left;
+            overflow: hidden; box-sizing: border-box;
+        }
+
+        .main-bg {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: #19f radial-gradient(circle at center, transparent 20%, #02c 100%); z-index: -1;
+        }
+
+        .ticker-top {
+            position: absolute; bottom: 450px; left: 10px; width: 700px; z-index: 150;
+            display: flex; justify-content: center; align-items: center;
+            transition: transform 0.5s ease; /* Added for smooth ticker movement */
+        }
+        
+        #breakingnews {
+            width: 100%; height: 160px; background: #6d0102; border-radius: 15px; border: 2px solid #fff000;
+            display: flex; align-items: center; justify-content: center; overflow: hidden;
+        }
+        #adbreakingnews { width: 100%; }
+        #adbreakingnews ul, #adbreakingnews li { list-style: none; margin: 0; padding: 0; padding-top: 5px; }
+        .af_news { height: 0px; overflow: hidden; transition: height 0.5s ease-in-out; display: flex; align-items: center; justify-content: center; width: 100%; }
+        .af_news.active { height: 130px; }
+        #adbreakingnews li a {
+            font-family: 'Tamil039'; font-weight: bold; font-size: 32px; word-spacing: -8px; color: #fff;
+            transition: all 1.5s ease-in-out; text-decoration: none; text-shadow: -1px -1px 1px #000, 1px 1px 1px #fff;
+            line-height: 1.9; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+            overflow: hidden; white-space: normal; padding: 0 15px; text-align: center;
+        }
+
+        #top-case-overlay {
+            position: absolute; top: 30px; left: 2%; width: 96%; height: 7.5%;
+            border-radius: 15px; border: 2px solid #fff000; background: linear-gradient(135deg, #c60203 0%, #6d0102 100%);
+            z-index: 50; display: flex; align-items: center; justify-content: center; gap: 15px; 
+            opacity: 0; visibility: hidden; transition: opacity 0.5s ease, visibility 0.5s; overflow: hidden;
+        }
+        #top-case-overlay.show-case { opacity: 1; visibility: visible; }
+        #top-case-year { color: #e1b941; font-family: Arial, sans-serif; font-size: 32px; font-weight: 900; }
+        #top-case-name { color: #ffffff; font-family: 'Tamil039', sans-serif !important; font-size: 20px; font-weight: bold; word-spacing: -8px; text-shadow: -1px -1px 1px #000, 1px 1px 1px #fff; padding-top: 8px; }
+
+        .ai-fixed-frame {
+            position: absolute; top: 10px; left: 10px; width: 700px; height: 1210px;
+            box-shadow: inset 0 0 0 2px #fff; border-radius: 20px; overflow: hidden; z-index: 100; background: transparent; 
+        }
+        .news-wrapper { width: 100%; height: 100%; display: block; position: relative; cursor: pointer; }
+
+        .top-right-logo {
+            position: absolute; top: 20px; right: -45px; width: 300px; height: auto;
+            z-index: 200; filter: drop-shadow(2px 2px 5px rgba(0,0,0,0.8));
+        }
+
+        #theme-bg-layer {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(135deg, #c60203 0%, #6d0102 100%); z-index: 1; 
+            opacity: 1; visibility: visible; transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+        #theme-bg-layer.hide-bg { opacity: 0; visibility: hidden; }
+
+        #location-ticker-container {
+            position: absolute; top: 30px; left: 30px; z-index: 150;
+            display: flex; align-items: center; opacity: 0; visibility: hidden;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+        #location-ticker-container.active { opacity: 1; visibility: visible; }
+        .loc-icon { font-size: 20px; color: #ff3333; margin-right: 15px; filter: drop-shadow(1px 1px 2px rgba(0,0,0,0.9)); animation: pulse-pin 1.5s infinite; position: relative; top: -6px; }
+        @keyframes pulse-pin { 0% { transform: scale(1); } 50% { transform: scale(1.15); } 100% { transform: scale(1); } }
+        #location-ticker-wrapper { height: 40px; overflow: hidden; display: flex; align-items: center; }
+        #location-ticker-wrapper ul { list-style: none; margin: 0; padding: 0; }
+        .loc_news { height: 0; overflow: hidden; transition: height 0.5s ease; display: flex; align-items: center; }
+        .loc_news.active { height: 45px; }
+        .loc_news a { color: #ffffff; text-decoration: none; font-family: 'Tamil039', sans-serif; font-size: 20px; font-weight: bold; text-shadow: 0px 2px 5px rgba(0,0,0,0.9), -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000; line-height: 1.2; padding-top: 3px; }
+
+        /* Media Layers - Perfectly aligned above the 16:9 bottom section */
+        #local-video-layer, #local-video-layer-buffer, #local-img-layer, #local-video-layer-2, #webrtc-iframe, .text-section { 
+            position: absolute; top: 0; left: 0; width: 100%; height: calc(100% - 394px); 
+            object-fit: cover; opacity: 0; visibility: hidden; 
+            object-position: 50% 50%; /* Center by default */
+            transform-origin: 50% 50%;
+            transform: scale(1);
+            transition: height 0.6s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.5s ease-in-out, visibility 0.5s, object-position 0.5s ease, transform-origin 0.5s ease, transform 0.5s ease; 
+        }
+        #local-video-layer, #local-video-layer-buffer, #local-img-layer { z-index: 101; }
+        #local-video-layer-2 { z-index: 102; }
+        #webrtc-iframe { z-index: 103; border: none; pointer-events: none; background: transparent; }
+        .text-section { z-index: 10; display: flex; flex-direction: column; justify-content: center; align-items: center; box-sizing: border-box; overflow: hidden; opacity: 1; visibility: visible; }
+        
+        .output { position: relative; z-index: 10; font-family: 'Tamil039', sans-serif; font-size: 22px; color: #ffc16f; opacity: 0.9; line-height: 1.6; font-weight: bold; text-align: center; word-spacing: -7px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; max-height: calc(2 * 1.6em); animation: tv-flash 1.5s linear infinite alternate; text-shadow: 0px 6px 15px rgba(0,0,0,0.9); padding: 20px; }
+        
+        #mermaid-container { margin-top: 30px; width: 100%; height: 230px; display: flex; justify-content: center; align-items: center; overflow: hidden; }
+        #mermaid-container:empty { display: none; }
+        @keyframes drawChartReveal { 0% { clip-path: inset(0 100% 0 0); opacity: 0.5; } 100% { clip-path: inset(0 0 0 0); opacity: 1; } }
+        #mermaid-container svg { max-width: 100% !important; max-height: 100% !important; background: transparent !important; filter: drop-shadow(0px 5px 12px rgba(0,0,0,0.9)); animation: drawChartReveal 1.5s ease-in-out forwards; }
+        .mermaid * { font-family: 'Tamil039', sans-serif !important; }
+
+        /* Exactly 16:9 Bottom Section */
+        .anim-section { 
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 394px;
+            background: linear-gradient(269deg, #bd931b 0%, #6d0102 100%); 
+            border-top: 2px solid rgba(255,255,255,0.4); box-sizing: border-box; z-index: 50; overflow: hidden;
+            transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s ease;
+        }
+
+        #local-slider-layer { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            z-index: 102; opacity: 1; visibility: visible; overflow: hidden; 
+            background: transparent; 
+            transition: opacity 0.5s cubic-bezier(0.25, 1, 0.5, 1), visibility 0.5s;
+        }
+        .nivoSlider { position: relative; width: 100%; height: 100%; overflow: hidden; }
+        .nivoSlider > a > img, .nivoSlider > img, .nivo-main-image { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; }
+        .nivo-slice, .nivo-box { display: block; position: absolute; z-index: 5; overflow: hidden; }
+        .nivo-slice img, .nivo-box img { display: block; position: absolute; max-width: none !important; height: 100% !important; object-fit: cover; }
+        .nivo-caption, .nivo-directionNav a, .nivo-controlNav { display: none !important; }
+
+        #layer-text-slider { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(109, 1, 2, 0.95); display: flex; justify-content: center; align-items: center; 
+            z-index: 105; opacity: 0; visibility: hidden; pointer-events: none; transition: opacity 0.5s ease; 
+        }
+        #layer-text-slider.active { opacity: 1; visibility: visible; pointer-events: auto; }
+        
+        .news-wrapper-native { width: 100%; display: flex; justify-content: center; align-items: center; pointer-events: none; }
+        .news-box-native { background-color: #c60203; opacity: 0.95; color: #ffffff; padding: 20px 30px; width: auto; max-width: 80%; overflow: hidden; border: 2px solid #fff; border-radius: 15px; box-shadow: 0px 5px 20px rgba(0,0,0,0.8); box-sizing: border-box; display: flex; align-items: center; justify-content: center; }
+        .cticker_af_news { max-height: 0px; opacity: 0; overflow: hidden; transition: max-height 0.8s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.6s ease; display: flex; align-items: center; justify-content: center; }
+        .cticker_af_news.active { max-height: 500px; opacity: 1; }
+        #cticker-feed-wrapper ul, #cticker-feed-wrapper li { list-style: none; margin: 0; padding: 0px; width: 100%; }
+        #cticker-feed-wrapper li a { text-decoration: none; color: #ffffff; font-family: 'Tamil039', sans-serif; font-size: 26px; font-weight: bold; line-height: 1.8; text-shadow: 2px 2px 5px rgba(0,0,0,0.9); display: -webkit-box; -webkit-line-clamp: 7; -webkit-box-orient: vertical; overflow: hidden; }
+
+        .ticker { background: linear-gradient(90deg,#0000 33%,rgba(255,255,255,0.3) 50%,#0000 66%) #c60203; background-image: url('https://host.rtbs.in/media/tv-bg.gif'); background-size:100% 100%; width: 100%; height: 50px; overflow: hidden; position: absolute; bottom: 0; left: 0; white-space: nowrap; z-index: 10; display: flex; align-items: center; }
+        .breaking-scroll,.breaking-scroll a:link { text-decoration: none; height: 47px; color:#FFF; font-family: 'Tamil039'; font-weight: bold; font-size:22px; text-shadow: -1px -1px 1px #fff, 1px 1px 1px #000; word-spacing: -5px; margin-top: 2px; }
+        .ticker .stock-info { width: 170px; height: 100%; }
+        .breaking_news { float:right; width:100%; font-family: "Agdasima", sans-serif; font-size: 32px; margin-top: 0; text-shadow: -1px -1px 1px #fff, 1px 1px 1px #000; letter-spacing: 2px; line-height: 1; }
+        .label { float:right; height: 50px; display: flex; align-items: center; justify-content: center; padding: 0 10px; background:linear-gradient(135deg, #c60203 0%, #6d0102 100%); color:#FFF; font-weight: bold; text-transform: uppercase; box-sizing: border-box; }
+        
+        .ripple { position: relative; overflow: hidden; }
+        .ripple:after { content: ''; position: absolute; top: 50%; left: 50%; width: 9px; height: 5px; background: rgba(255, 255, 255, .5); opacity: 0; border-radius: 100%; transform: scale(1, 1) translate(-50%); transform-origin: 50% 50%; animation: ripple 1.5s ease-out infinite; }
+        .lower-ticker { margin-top: 1020px; z-index: 10; position: relative; }
+
+        @keyframes ripple { 0% { transform: scale(0, 0); opacity: 1; } 20% { transform: scale(25, 25); opacity: 1; } 100% { opacity: 0; transform: scale(40, 40); } }
+        @keyframes tv-flash { 0%, 80% { color: #ffffff; } 90% { color: #ff0000; } 100% { color: #ffffff; } }
+
+        #stinger-overlay { position: absolute; top: 0; left: 0; width: 100%; height: calc(100% - 394px); z-index: 99999; pointer-events: none; overflow: hidden; visibility: hidden; transition: height 0.6s cubic-bezier(0.25, 1, 0.5, 1); }
+        .stinger-left, .stinger-right { position: absolute; top: 0; width: 50%; height: 100%; background: linear-gradient(135deg, #c60203 0%, #6d0102 100%); box-shadow: 0 0 50px rgba(0,0,0,0.9); transform: translateX(0); }
+        .stinger-left { left: 0; border-right: 4px solid #ffc16f; }
+        .stinger-right { right: 0; border-left: 4px solid #ffc16f; }
+        #stinger-overlay.active .stinger-left { transform: translateX(-100%); transition: transform 0.25s cubic-bezier(0.77, 0, 0.175, 1); }
+        #stinger-overlay.active .stinger-right { transform: translateX(100%); transition: transform 0.25s cubic-bezier(0.77, 0, 0.175, 1); }
+    </style>
+</head>
+<body>
+
+    <audio id="bgAudio" style="display:none;" crossorigin="anonymous"></audio>
+
+    <div class="main-container">
+        
+        <div class="main-bg"></div>
+
+        <div class="ticker-top">
+            <div id="breakingnews">
+                <div id='adbreakingnews'></div>
+            </div>
+        </div>
+
+        <div class="ai-fixed-frame">
+            <div class="news-wrapper">
+                
+                <!-- TOP MEDIA SECTION -->
+                <video class="top-right-logo" src="https://media.mpvk.in/assets/mpvk-logo.webm" autoplay loop muted playsinline></video>
+
+                <div id="theme-bg-layer"></div>
+                
+                <div id="location-ticker-container">
+                    <i class="fa-solid fa-location-dot loc-icon"></i>
+                    <div id="location-ticker-wrapper"></div>
+                </div>
+
+                <video id="local-video-layer" loop muted></video>
+                <video id="local-video-layer-buffer" loop muted></video>
+                <img id="local-img-layer" alt="" />
+                <video id="local-video-layer-2"></video>
+                
+                <iframe id="webrtc-iframe" src="https://rtsp.vaagaiseithigal.com/?scene&room=VaagaiSeithigal&scenetype=2&order=N&916&cover&exclude=Anchor&controls=0&noaudio&cc&cv&transparency&animate&sl&fontsize=140&css=https://host.rtbs.in/rtcs/label-mt-debate.css" scrolling="no" allow="autoplay; camera; microphone; display-capture"></iframe>
+                
+                <div class="text-section">
+                    <div id="output" class="output">வாகை செய்திகள் இனிதே வரவேற்கிறது...</div>
+                    <div id="mermaid-container"></div>
+                </div>
+
+                <div id="stinger-overlay">
+                    <div class="stinger-left"></div>
+                    <div class="stinger-right"></div>
+                </div>
+
+                <!-- EXACT 16:9 BOTTOM SECTION -->
+                <div class="anim-section" id="anim-section">
+                    <div id="local-slider-layer" class="nivoSlider"></div>
+                    
+                    <div id="layer-text-slider">
+                        <div class="news-wrapper-native">
+                            <div class="news-box-native" style="display:none;">
+                                <div id="cticker-feed-wrapper"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div id="top-case-overlay">
+            <span id="top-case-year"></span>
+            <span id="top-case-name"></span>
+        </div>
+
+        <div class='lower-ticker'></div>
+
+        <div class='ticker'>
+            <nav class="breaking-scroll" id="breaking-scroll" role="navigation">
+                <div id="ticker-content"></div>
+            </nav>
+            <div class='stock-info'>
+                <div class="breaking_news">
+                    <div class="label ripple">BREAKING NEWS</div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script type="text/javascript">
+        let cTickerInterval = null, topTickerInterval = null, locTickerInterval = null;
+
+        function fetchTickers() {
+            const ts = new Date().getTime();
+            $.ajax({ url: "http://127.0.0.1:3000/Tickers/TopTicker.txt?t=" + ts, dataType: "text", success: function(data) { if (data !== window.prevTopData) { window.prevTopData = data; updateTopTicker(data); } }, error: function() {} });
+            $.ajax({ url: "http://127.0.0.1:3000/Tickers/CenterTicker.txt?t=" + ts, dataType: "text", success: function(data) { if (data !== window.prevCenterData) { window.prevCenterData = data; updateCTicker(data); } }, error: function() {} });
+            $.ajax({ url: "http://127.0.0.1:3000/Tickers/LocationTicker.txt?t=" + ts, dataType: "text", success: function(data) { if (data !== window.prevLocData) { window.prevLocData = data; updateLocTicker(data); } }, error: function() {} });
+        }
+
+        function updateTopTicker(textData) {
+            let lines = textData.split('\n').filter(line => line.trim() !== '');
+            var newsContainer = document.getElementById("adbreakingnews");
+            if (lines.length === 0) { newsContainer.innerHTML = ""; return; }
+            let html = "<ul>"; lines.forEach(line => { html += '<li class="af_news"><a href="javascript:void(0);">' + line + "</a></li>"; }); html += "</ul>";
+            newsContainer.innerHTML = html;
+            if (topTickerInterval) clearInterval(topTickerInterval);
+            let af_now = 0; const af_boxes = document.querySelectorAll(".af_news");
+            if (af_boxes.length > 0) {
+                af_boxes[af_now].classList.add("active");
+                if (af_boxes.length > 1) { topTickerInterval = setInterval(() => { af_boxes[af_now].classList.remove("active"); af_now = (af_now + 1) % af_boxes.length; setTimeout(() => af_boxes[af_now].classList.add("active"), 500); }, 4000); }
+            }
+        }
+
+        function updateCTicker(textData) {
+            let lines = textData.split('\n').filter(line => line.trim() !== '');
+            if (lines.length === 0) { $('#cticker-feed-wrapper').empty(); if (cTickerInterval) clearInterval(cTickerInterval); $('.news-box-native').hide(); return; } else { $('.news-box-native').show(); }
+            let html = "<ul>"; lines.forEach(line => { html += '<li class="cticker_af_news"><a href="javascript:void(0);">' + line + '</a></li>'; }); html += "</ul>";
+            $('#cticker-feed-wrapper').empty().append(html);
+            if (cTickerInterval) clearInterval(cTickerInterval);
+            let af_now = 0; const af_boxes = document.querySelectorAll(".cticker_af_news");
+            if (af_boxes.length > 0) {
+                af_boxes[af_now].classList.add("active");
+                if(af_boxes.length > 1) { cTickerInterval = setInterval(() => { af_boxes[af_now].classList.remove("active"); af_now = (af_now + 1) % af_boxes.length; setTimeout(() => { if(af_boxes[af_now]) af_boxes[af_now].classList.add("active"); }, 500); }, 7000); }
+            }
+        }
+
+        function updateLocTicker(textData) {
+            let lines = textData.split('\n').filter(line => line.trim() !== '');
+            if (lines.length === 0) { $('#location-ticker-wrapper').empty(); if (locTickerInterval) clearInterval(locTickerInterval); return; }
+            let html = "<ul>"; lines.forEach(line => { html += '<li class="loc_news"><a href="javascript:void(0);">' + line + '</a></li>'; }); html += "</ul>";
+            $('#location-ticker-wrapper').empty().append(html);
+            if (locTickerInterval) clearInterval(locTickerInterval);
+            let af_now = 0; const af_boxes = document.querySelectorAll(".loc_news");
+            if (af_boxes.length > 0) {
+                af_boxes[af_now].classList.add("active");
+                if(af_boxes.length > 1) { locTickerInterval = setInterval(() => { af_boxes[af_now].classList.remove("active"); af_now = (af_now + 1) % af_boxes.length; setTimeout(() => { if(af_boxes[af_now]) af_boxes[af_now].classList.add("active"); }, 500); }, 4000); }
+            }
+        }
+
+        $(document).ready(function() { fetchTickers(); setInterval(fetchTickers, 5000); });
+
+        let validSliderImages = []; let sliderInitializing = false; let prevImagesJSON = "";
+
+        function loadAndInitSlider() {
+            if (sliderInitializing) return;
+            sliderInitializing = true;
+            fetch("http://127.0.0.1:3000/api/slider_images")
+                .then(res => res.json())
+                .then(data => {
+                    if (data.images && data.images.length > 0) {
+                        prevImagesJSON = JSON.stringify(data.images);
+                        validSliderImages = data.images.map(img => `http://127.0.0.1:3000/Images/${img}?t=${new Date().getTime()}`);
+                        initNivoLocalSlider(); 
+                    }
+                    sliderInitializing = false;
+                }).catch(err => { console.error("Slider fetch failed:", err); sliderInitializing = false; });
+        }
+
+        function initNivoLocalSlider() {
+            let sliderContainer = $("#local-slider-layer"); 
+            sliderContainer.removeData('nivoslider'); sliderContainer.empty();
+            validSliderImages.forEach(url => { sliderContainer.append(`<img src="${url}" alt="" />`); });
+            sliderContainer.nivoSlider({ effect: "sliceDown,sliceUpDown,sliceUpDownLeft,fold,fade", pauseTime: 5000, animSpeed: 800, directionNav: false, controlNav: false, pauseOnHover: false });
+        }
+        
+        loadAndInitSlider(); // Auto-load slider initially
+
+        setInterval(() => {
+            if(isSliderVisible) {
+                fetch("http://127.0.0.1:3000/api/slider_images")
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.images && data.images.length > 0) {
+                            let currentJSON = JSON.stringify(data.images);
+                            if (currentJSON !== prevImagesJSON) {
+                                prevImagesJSON = currentJSON;
+                                validSliderImages = data.images.map(img => `http://127.0.0.1:3000/Images/${img}?t=${new Date().getTime()}`);
+                                initNivoLocalSlider();
+                            }
+                        }
+                    }).catch(e => console.log(e));
+            }
+        }, 10000);
+    </script>
+
+    <script type="text/javascript">
+        const MAX_POSTS = 99; const BULLET_CHAR = "&#x2727;";
+        function RecentPostsScrollerv2(json) {
+            try {
+                let headlines = "";
+                for (let i = 0; i < MAX_POSTS; i++) {
+                    const post = json.feed.entry[i]; if (!post) break;
+                    let postURL = ""; for (let j = 0; j < post.link.length; j++) { if (post.link[j].rel === 'alternate') { postURL = post.link[j].href; break; } }
+                    headlines += `<b>${BULLET_CHAR}</b> <a target="_blank" href="${postURL}">${post.title.$t}</a>&nbsp;&nbsp;`;
+                }
+                const fullText = headlines.repeat(4);
+                const marqueeHTML = `<marquee behavior="scroll" onmouseover="this.stop();" onmouseout="this.start();" width="100%" direction="left">${fullText}</marquee>`;
+                document.getElementById("ticker-content").innerHTML = marqueeHTML;
+            } catch (e) { console.error("Ticker Load Error:", e); }
+        }
+    </script>
+    <script src="https://www.mpvk.in/feeds/posts/default?alt=json-in-script&callback=RecentPostsScrollerv2&max-results=99"></script>
+
+    <script>
+        const outputDiv = document.getElementById("output");
+        const mermaidDiv = document.getElementById("mermaid-container");
+        const topCaseOverlay = document.getElementById("top-case-overlay");
+        
+        const webrtcIframe = document.getElementById("webrtc-iframe"); 
+        const localSliderLayer = document.getElementById("local-slider-layer");
+        const v2Element = document.getElementById("local-video-layer-2");
+        const myAudio = document.getElementById("bgAudio");
+        
+        let currentVideoPlaylist = []; let currentVideoIndex = 0; let isSingleLoop = false; let activePlayer = 1;
+        let isTextHidden = false, isLocalMediaVisible = false, isSliderVisible = true, isWebrtcVisible = false, isCTickerVisible = false, isVideo2Visible = false;
+        let isStarted = false;
+        let isMediaMuted = false;
+        
+        let panX = 50; 
+        let panY = 50;
+        let zoomLevel = 1;
+        let topTickerY = 0;
+        let isMediaExpanded = false;
+
+        function updateMediaTransform() {
+            const elements = ["local-video-layer", "local-video-layer-buffer", "local-img-layer", "local-video-layer-2"];
+            elements.forEach(id => {
+                let el = document.getElementById(id);
+                if(el) {
+                    el.style.objectPosition = `${panX}% 50%`;
+                    el.style.transformOrigin = `50% ${panY}%`;
+                    el.style.transform = `scale(${zoomLevel})`;
+                }
+            });
+        }
+
+        function updateTopTickerPosition() {
+            const tickerTop = document.querySelector('.ticker-top');
+            if (tickerTop) {
+                tickerTop.style.transform = `translateY(${topTickerY}px)`;
+            }
+        }
+
+        function startAudioSync() {
+            if (isStarted) return; 
+            isStarted = true;
+            if (!myAudio.src || myAudio.src === window.location.href) { 
+                myAudio.src = "http://127.0.0.1:3000/audio.mp3"; 
+                myAudio.load(); 
+            }
+            myAudio.play().catch(e => console.log("Audio Play Error:", e));
+        }   
+
+        function stopAudioSync() { 
+            isStarted = false; 
+            if (myAudio && !myAudio.paused) { myAudio.pause(); } 
+        }
+
+        function executeWithStinger(callback) {
+            const stinger = document.getElementById("stinger-overlay");
+            if (stinger) {
+                stinger.classList.remove("active"); stinger.style.visibility = 'visible';
+                if (callback) callback(); 
+                setTimeout(() => { stinger.classList.add("active"); }, 30);
+                setTimeout(() => { stinger.style.visibility = 'hidden'; }, 300); 
+            } else { if (callback) callback(); }
+        }
+
+        function playNextVideoInList() {
+            const v1 = document.getElementById("local-video-layer"); const v2 = document.getElementById("local-video-layer-buffer"); const i = document.getElementById("local-img-layer");
+            if (currentVideoIndex < currentVideoPlaylist.length) {
+                let fileName = currentVideoPlaylist[currentVideoIndex];
+                let isImg = fileName.toLowerCase().match(/\.(gif|png|jpg|jpeg)$/);
+                let fileUrl = `http://127.0.0.1:3000/${isImg ? "Gif" : "Videos"}/${fileName}`;
+                let nextV = activePlayer === 1 ? v2 : v1; let currV = activePlayer === 1 ? v1 : v2;
+
+                const executePlay = () => {
+                    turnOffTopMedia('media'); isLocalMediaVisible = true;
+                    if (i) { i.style.opacity = "0"; i.style.visibility = "hidden"; }
+                    activePlayer = activePlayer === 1 ? 2 : 1;
+                    nextV.style.visibility = "visible"; nextV.style.opacity = "1"; nextV.play().catch(e => console.log(e));
+                    currV.style.opacity = "0"; currV.style.visibility = "hidden"; currV.pause();
+                    preloadNextVideo();
+                };
+
+                if (isImg) {
+                    if (i) i.src = fileUrl;
+                    const playImg = () => {
+                        turnOffTopMedia('media'); isLocalMediaVisible = true;
+                        currV.style.opacity = "0"; currV.style.visibility = "hidden"; currV.pause();
+                        nextV.style.opacity = "0"; nextV.style.visibility = "hidden"; nextV.pause();
+                        if (i) { i.style.visibility = "visible"; i.style.opacity = "1"; }
+                        preloadNextVideo();
+                    };
+                    i.onload = () => { i.onload = null; executeWithStinger(playImg); };
+                    setTimeout(() => { if (i.onload) { i.onload = null; executeWithStinger(playImg); } }, 500);
+                } else {
+                    if (nextV.src && nextV.src.indexOf(encodeURIComponent(fileName)) !== -1 && nextV.readyState >= 3) {
+                        executeWithStinger(executePlay);
+                    } else {
+                        nextV.loop = isSingleLoop; nextV.muted = isMediaMuted; nextV.src = fileUrl; nextV.load();
+                        const handlePlayReady = () => { nextV.oncanplay = null; executeWithStinger(executePlay); };
+                        nextV.oncanplay = handlePlayReady; setTimeout(() => { if(nextV.oncanplay) handlePlayReady(); }, 1500);
+                    }
+                }
+            } else {
+                currentVideoPlaylist = []; isLocalMediaVisible = false;
+                const v1 = document.getElementById("local-video-layer"); const v2 = document.getElementById("local-video-layer-buffer");
+                if (v1) { v1.style.opacity = "0"; setTimeout(() => { if(!isLocalMediaVisible){ v1.style.visibility = "hidden"; v1.pause(); v1.src = ""; } }, 500); }
+                if (v2) { v2.style.opacity = "0"; setTimeout(() => { if(!isLocalMediaVisible){ v2.style.visibility = "hidden"; v2.pause(); v2.src = ""; } }, 500); }
+            }
+        }
+
+        function preloadNextVideo() {
+            if (currentVideoIndex + 1 < currentVideoPlaylist.length) {
+                let nextFileName = currentVideoPlaylist[currentVideoIndex + 1];
+                let isImg = nextFileName.toLowerCase().match(/\.(gif|png|jpg|jpeg)$/);
+                if (!isImg) {
+                    let fileUrl = `http://127.0.0.1:3000/Videos/${nextFileName}`;
+                    let preloadV = activePlayer === 1 ? document.getElementById("local-video-layer-buffer") : document.getElementById("local-video-layer");
+                    preloadV.loop = isSingleLoop; preloadV.muted = isMediaMuted;
+                    if (!preloadV.src || preloadV.src.indexOf(encodeURIComponent(nextFileName)) === -1) { preloadV.src = fileUrl; preloadV.load(); }
+                }
+            }
+        }
+
+        const onVideoEnded = function() { if (currentVideoPlaylist && currentVideoPlaylist.length > 0 && !isSingleLoop) { currentVideoIndex++; playNextVideoInList(); } };
+        document.getElementById("local-video-layer")?.addEventListener('ended', onVideoEnded);
+        document.getElementById("local-video-layer-buffer")?.addEventListener('ended', onVideoEnded);
+
+        function turnOffTopMedia(currentOn) {
+            if (currentOn !== 'media' && isLocalMediaVisible) {
+                isLocalMediaVisible = false; currentVideoPlaylist = []; 
+                const v1 = document.getElementById("local-video-layer"); const v2 = document.getElementById("local-video-layer-buffer"); const i = document.getElementById("local-img-layer");
+                if (v1) { v1.style.opacity = "0"; setTimeout(() => { if (!isLocalMediaVisible) { v1.style.visibility = "hidden"; v1.pause(); } }, 500); }
+                if (v2) { v2.style.opacity = "0"; setTimeout(() => { if (!isLocalMediaVisible) { v2.style.visibility = "hidden"; v2.pause(); } }, 500); }
+                if (i) { i.style.opacity = "0"; setTimeout(() => { if (!isLocalMediaVisible) { i.style.visibility = "hidden"; i.src = ""; } }, 500); }
+            }
+            if (currentOn !== 'video2' && isVideo2Visible) { isVideo2Visible = false; if (v2Element) { v2Element.style.opacity = "0"; setTimeout(() => { if (!isVideo2Visible) { v2Element.style.visibility = "hidden"; v2Element.pause(); } }, 500); } }
+            if (currentOn !== 'webrtc' && isWebrtcVisible) { isWebrtcVisible = false; if (webrtcIframe) { webrtcIframe.style.visibility = "hidden"; webrtcIframe.style.opacity = "0"; webrtcIframe.style.pointerEvents = "none"; } }
+            if (currentOn !== 'text' && !isTextHidden) { isTextHidden = true; if (outputDiv) outputDiv.style.opacity = "0"; if (mermaidDiv) mermaidDiv.style.opacity = "0"; if (topCaseOverlay) topCaseOverlay.style.opacity = "0"; }
+        }
+
+        let evtSource;
+        function connectSSE() {
+            evtSource = new EventSource('http://127.0.0.1:3000/events');
+            evtSource.onmessage = function(e) {
+                const data = JSON.parse(e.data);
+                switch (data.cmd) {
+                    case 'play_audio': startAudioSync(); break;
+                    case 'pause_audio': stopAudioSync(); break;
+                    case 'global_off': 
+                        executeWithStinger(() => { 
+                            turnOffTopMedia('none'); 
+                        }); 
+                        break;
+                    case 'trigger_next': if (currentVideoPlaylist && currentVideoPlaylist.length > 0) { currentVideoIndex++; playNextVideoInList(); } break;
+                    case 'local_media': isSingleLoop = true; currentVideoPlaylist = [data.file]; currentVideoIndex = 0; playNextVideoInList(); break;
+                    case 'playlist_trigger': isSingleLoop = false; currentVideoPlaylist = data.videos || []; currentVideoIndex = 0; playNextVideoInList(); break;
+                    
+                    case 'pan_left':
+                        if (panX > 0) { panX -= 10; updateMediaTransform(); }
+                        break;
+                    case 'pan_right':
+                        if (panX < 100) { panX += 10; updateMediaTransform(); }
+                        break;
+                    case 'pan_up':
+                        if (panY < 100) { panY += 10; updateMediaTransform(); }
+                        break;
+                    case 'pan_down':
+                        if (panY > 0) { panY -= 10; updateMediaTransform(); }
+                        break;
+                    case 'zoom_in':
+                        if (zoomLevel < 3) { zoomLevel += 0.2; updateMediaTransform(); }
+                        break;
+                    case 'zoom_out':
+                        if (zoomLevel > 1) { zoomLevel -= 0.2; updateMediaTransform(); }
+                        break;
+                    case 'pan_center':
+                        panX = 50; panY = 50; zoomLevel = 1; updateMediaTransform();
+                        break;
+
+                    case 'ticker_up':
+                        topTickerY -= 20; updateTopTickerPosition();
+                        break;
+                    case 'ticker_down':
+                        topTickerY += 20; updateTopTickerPosition();
+                        break;
+                    case 'ticker_reset':
+                        topTickerY = 0; updateTopTickerPosition();
+                        break;
+
+                    case 'media_action':
+                        if (data.action === 'mute_toggle') {
+                            isMediaMuted = !isMediaMuted;
+                            const v1 = document.getElementById("local-video-layer");
+                            const v2 = document.getElementById("local-video-layer-buffer");
+                            if (v1) v1.muted = isMediaMuted;
+                            if (v2) v2.muted = isMediaMuted;
+                        }
+                        break;
+
+                    case 'video2_action':
+                        if (data.action === 'play_pause') {
+                            if (!isVideo2Visible) {
+                                let v2Url = "http://127.0.0.1:3000/Videos/" + data.file;
+                                if (!v2Element.src.includes(encodeURI(data.file))) {
+                                    v2Element.src = v2Url; v2Element.load();
+                                    const handleV2Ready = () => { v2Element.oncanplay = null; executeWithStinger(() => { isVideo2Visible = true; turnOffTopMedia('video2'); v2Element.style.visibility = "visible"; v2Element.style.opacity = "1"; v2Element.play().catch(console.error); }); };
+                                    v2Element.oncanplay = handleV2Ready; setTimeout(() => { if(v2Element.oncanplay) handleV2Ready(); }, 1500);
+                                } else { executeWithStinger(() => { isVideo2Visible = true; turnOffTopMedia('video2'); v2Element.style.visibility = "visible"; v2Element.style.opacity = "1"; v2Element.play().catch(console.error); }); }
+                            } else { v2Element.paused ? v2Element.play() : v2Element.pause(); }
+                        } else if (data.action === 'mute_toggle') { v2Element.muted = !v2Element.muted; }
+                        break;
+                    case 'toggle_text':
+                        executeWithStinger(() => {
+                            isTextHidden = !isTextHidden; if (!isTextHidden) turnOffTopMedia('text');
+                            const tOp = isTextHidden ? "0" : "1";
+                            if (outputDiv) outputDiv.style.opacity = tOp; if (mermaidDiv) mermaidDiv.style.opacity = tOp;
+                            if (topCaseOverlay) topCaseOverlay.style.opacity = isTextHidden ? "0" : (topCaseOverlay.classList.contains("show-case") ? "1" : "0");
+                        });
+                        break;
+                    case 'toggle_webrtc':
+                        executeWithStinger(() => {
+                            isWebrtcVisible = !isWebrtcVisible; if (isWebrtcVisible) turnOffTopMedia('webrtc');
+                            if (webrtcIframe) { webrtcIframe.style.visibility = isWebrtcVisible ? "visible" : "hidden"; webrtcIframe.style.opacity = isWebrtcVisible ? "1" : "0"; webrtcIframe.style.pointerEvents = isWebrtcVisible ? "auto" : "none"; }
+                        });
+                        break;
+                    
+                    case 'toggle_social':
+                        isSliderVisible = !isSliderVisible;
+                        if (isSliderVisible) {
+                            isCTickerVisible = false;
+                            const cTickerLayer = document.getElementById("layer-text-slider");
+                            if (cTickerLayer) cTickerLayer.classList.remove("active");
+
+                            if (validSliderImages.length === 0) loadAndInitSlider();
+                            else { localSliderLayer.style.visibility = "visible"; localSliderLayer.style.opacity = "1"; }
+                        } else {
+                            if (localSliderLayer) { localSliderLayer.style.visibility = "hidden"; localSliderLayer.style.opacity = "0"; }
+                        }
+                        break;
+                    case 'toggle_cticker':
+                        isCTickerVisible = !isCTickerVisible;
+                        if (isCTickerVisible) {
+                            isSliderVisible = false;
+                            if (localSliderLayer) { localSliderLayer.style.visibility = "hidden"; localSliderLayer.style.opacity = "0"; }
+
+                            const cTickerLayer = document.getElementById("layer-text-slider");
+                            if (cTickerLayer) cTickerLayer.classList.add("active");
+                        } else {
+                            const cTickerLayer = document.getElementById("layer-text-slider");
+                            if (cTickerLayer) cTickerLayer.classList.remove("active");
+                        }
+                        break;
+                        
+                    case 'toggle_bg_cover': executeWithStinger(() => { const bgLayer = document.getElementById("theme-bg-layer"); if (bgLayer) { bgLayer.classList.toggle("hide-bg"); } }); break;
+                    case 'toggle_location': const locLayer = document.getElementById("location-ticker-container"); if (locLayer) { locLayer.classList.toggle("active"); } break;
+                    
+                    case 'toggle_media_height':
+                        isMediaExpanded = !isMediaExpanded;
+                        const mediaElements = ["local-video-layer", "local-video-layer-buffer", "local-img-layer", "local-video-layer-2", "webrtc-iframe", "stinger-overlay"];
+                        const textSection = document.querySelector(".text-section");
+                        const animSection = document.getElementById("anim-section");
+                        const topTicker = document.querySelector(".ticker-top");
+                        
+                        const expandedHeight = "100%"; 
+                        const normalHeight = "calc(100% - 394px)";
+                        
+                        const newHeight = isMediaExpanded ? expandedHeight : normalHeight;
+                        
+                        mediaElements.forEach(id => {
+                            const el = document.getElementById(id);
+                            if(el) el.style.height = newHeight;
+                        });
+                        
+                        if(textSection) textSection.style.height = newHeight;
+                        
+                        // Hide/Show bottom animation section smoothly
+                        if (animSection) {
+                            if (isMediaExpanded) {
+                                animSection.style.transform = "translateY(100%)";
+                                animSection.style.opacity = "0";
+                            } else {
+                                animSection.style.transform = "translateY(0)";
+                                animSection.style.opacity = "1";
+                            }
+                        }
+
+                        // Top Ticker-ஐ மறையச் செய்யும் லாஜிக் (புதிதாக சேர்க்கப்பட்டது)
+                        if (topTicker) {
+                            topTicker.style.transition = "transform 0.5s ease, opacity 0.4s ease, visibility 0.4s";
+                            if (isMediaExpanded) {
+                                topTicker.style.opacity = "0";
+                                topTicker.style.visibility = "hidden";
+                            } else {
+                                topTicker.style.opacity = "1";
+                                topTicker.style.visibility = "visible";
+                            }
+                        }
+                        break;
+                }
+            };
+            evtSource.onerror = function(err) { console.error("SSE Connection lost. Attempting to reconnect..."); evtSource.close(); setTimeout(connectSSE, 3000); };
+        }
+        connectSSE();
+    </script>
+</body>
+</html>
